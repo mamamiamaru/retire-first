@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退休目標計算器 | 感性媽媽的數字實驗室</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS 變數：浪漫溫暖色系 */
+        :root {
+            --cream: #fdf8f2;
+            --rose: #d4867a;
+            --rose-d: #b5635a;
+            --sage: #8fab90;
+            --text: #564743;
+            --card-bg: rgba(255, 255, 255, 0.92);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        /* 核心修正：改用 min-height 確保矮螢幕筆電不跑位裁切，並用 Flex 完美置中 */
+        body {
+            background-color: var(--cream);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-y: auto; /* 內容多時允許滾動 */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        h1 span {
+            color: var(--rose);
+            font-style: italic;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #8c7671;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(212, 134, 122, 0.1);
+            border: 1px solid rgba(212, 134, 122, 0.15);
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--rose-d);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .label-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .value-display {
+            color: var(--rose);
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            position: relative;
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px 15px;
+            border: 1px solid #e0d5d3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-wrap input[type="number"] {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 1.2rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* 滑桿樣式 */
+        input[type="range"] {
+            width: 100%;
+            margin-top: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ebdcd9;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--rose);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* 核心修正：解決結果區塊的隱藏與顯示衝突 */
+        .result-section {
+            display: none; /* 預設隱藏 */
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .result-section.active {
+            display: block; /* 計算後顯示 */
+            opacity: 1;
+        }
+
+        .result-card {
+            background: #fff;
+            border-left: 6px solid var(--sage);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #f0e6e4;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-val {
+            font-weight: 700;
+            color: var(--sage);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>退休目標<span>計算器</span></h1>
+        <div class="subtitle">用愛與數字，為你與家人的未來好好規劃</div>
+
+        <div class="card">
+            <div class="section-title">告訴我你的故事</div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">🌱 目前年齡</span>
+                    <span class="value-display"><span id="val-age">30</span> 歲</span>
+                </div>
+                <div class="input-wrap">
+                    <span>👤</span>
+                    <input type="number" id="num-age" value="30" min="0" max="100">
+                </div>
+                <input type="range" id="range-age" min="0" max="100" value="30">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">🌸 預計退休年齡</span>
+                    <span class="value-display"><span id="val-retire">60</span> 歲</span>
+                </div>
+                <div class="input-wrap">
+                    <span>🏡</span>
+                    <input type="number" id="num-retire" value="60" min="0" max="100">
+                </div>
+                <input type="range" id="range-retire" min="0" max="100" value="60">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">🍃 預估壽命</span>
+                    <span class="value-display"><span id="val-death">85</span> 歲</span>
+                </div>
+                <div class="input-wrap">
+                    <span>⏳</span>
+                    <input type="number" id="num-death" value="85" min="0" max="120">
+                </div>
+                <input type="range" id="range-death" min="0" max="120" value="85">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">💰 退休後每月生活費 (現值)</span>
+                    <span class="value-display"><span id="val-expense">50,000</span> 元</span>
+                </div>
+                <div class="input-wrap">
+                    <span>☕</span>
+                    <input type="number" id="num-expense" value="50000" step="5000">
+                </div>
+            </div>
+        </div>
+
+        <div id="result-area" class="result-section">
+            <div class="card" style="border-left: 6px solid var(--sage);">
+                <div class="section-title" style="color: var(--sage);">你的專屬退休藍圖</div>
+                
+                <div class="result-card">
+                    <div class="result-row">
+                        <span>距離退休還有</span>
+                        <span class="result-val"><span id="res-years-to-retire">30</span> 年</span>
+                    </div>
+                    <div class="result-row">
+                        <span>退休生活總共</span>
+                        <span class="result-val"><span id="res-retirement-years">25</span> 年</span>
+                    </div>
+                    <div class="result-row">
+                        <span>預估需要的退休總準備金</span>
+                        <span class="result-val" style="color: var(--rose-d);"><span id="res-total-fund">15,000,000</span> 元</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 抓取所有輸入元件
+            const inputs = {
+                age: { num: document.getElementById('num-age'), range: document.getElementById('range-age'), txt: document.getElementById('val-age') },
+                retire: { num: document.getElementById('num-retire'), range: document.getElementById('range-retire'), txt: document.getElementById('val-retire') },
+                death: { num: document.getElementById('num-death'), range: document.getElementById('range-death'), txt: document.getElementById('val-death') },
+                expense: { num: document.getElementById('num-expense'), txt: document.getElementById('val-expense') }
+            };
+
+            const resultArea = document.getElementById('result-area');
+
+            // 同步數字輸入框與拉桿
+            function setupSync(elementObj) {
+                if(!elementObj.range) return;
+                
+                elementObj.num.addEventListener('input', function() {
+                    elementObj.range.value = this.value;
+                    calculateRetirement();
+                });
+                elementObj.range.addEventListener('input', function() {
+                    elementObj.num.value = this.value;
+                    calculateRetirement();
+                });
+            }
+
+            setupSync(inputs.age);
+            setupSync(inputs.retire);
+            setupSync(inputs.death);
+            inputs.expense.num.addEventListener('input', calculateRetirement);
+
+            // 核心計算與顯示邏輯
+            function calculateRetirement() {
+                const age = parseInt(inputs.age.num.value) || 0;
+                const retire = parseInt(inputs.retire.num.value) || 0;
+                const death = parseInt(inputs.death.num.value) || 0;
+                const expense = parseInt(inputs.expense.num.value) || 0;
+
+                // 更新畫面上的數字顯示
+                inputs.age.txt.innerText = age;
+                inputs.retire.txt.innerText = retire;
+                inputs.death.txt.innerText = death;
+                inputs.expense.txt.innerText = expense.toLocaleString();
+
+                // 邏輯防呆
+                if (retire > age && death > retire && expense > 0) {
+                    const yearsToRetire = retire - age;
+                    const retirementYears = death - retire;
+                    const totalFund = retirementYears * expense * 12;
+
+                    // 填入詳細資訊
+                    document.getElementById('res-years-to-retire').innerText = yearsToRetire;
+                    document.getElementById('res-retirement-years').innerText = retirementYears;
+                    document.getElementById('res-total-fund').innerText = totalFund.toLocaleString();
+
+                    // 顯示結果區塊
+                    resultArea.classList.add('active');
+                } else {
+                    // 若條件不符合則隱藏結果
+                    resultArea.classList.remove('active');
+                }
+            }
+
+            // 初始化第一次計算
+            calculateRetirement();
+        });
+    </script>
+</body>
+</html>
