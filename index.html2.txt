@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退休目標計算器 | 退休實驗室</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cream: #fdf8f2;
+            --rose: #d4867a;
+            --rose-d: #b5635a;
+            --sage: #8fab90;
+            --text: #564743;
+            --card-bg: rgba(255, 255, 255, 0.92);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            background-color: var(--cream);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        h1 span {
+            color: var(--rose);
+            font-style: italic;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #8c7671;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(212, 134, 122, 0.1);
+            border: 1px solid rgba(212, 134, 122, 0.15);
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--rose-d);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .label-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .value-display {
+            color: var(--rose);
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            position: relative;
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px 15px;
+            border: 1px solid #e0d5d3;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-wrap input[type="number"] {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 1.1rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-top: 10px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ebdcd9;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--rose);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        /* 結果區塊樣式 */
+        .result-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .result-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .result-card {
+            background: #fff;
+            border-left: 6px solid var(--sage);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #f0e6e4;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-val {
+            font-weight: 700;
+            color: var(--sage);
+            font-size: 1.1rem;
+        }
+
+        .coach-note {
+            background: #fff9f5;
+            border: 1px solid #fcece3;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #6e5a56;
+        }
+
+        .coach-note-title {
+            font-weight: 700;
+            color: var(--rose-d);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .highlight-box {
+            background: #faf4f0;
+            border: 1px solid #f3e5df;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+
+        .highlight-box.premium {
+            background: #f0f5fa;
+            border: 1px solid #dfe9f3;
+        }
+        
+        .highlight-title {
+            font-size: 0.9rem;
+            color: var(--rose-d);
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 行動呼籲 CTA 按鈕樣式 */
+        .cta-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: var(--rose-d);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(181, 99, 90, 0.3);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .cta-btn:hover {
+            background: var(--rose);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(181, 99, 90, 0.4);
+        }
+
+        .cta-hint {
+            font-size: 0.85rem;
+            color: #9c8480;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>退休目標<span>計算器</span></h1>
+        <div class="subtitle">用愛與數字，為你與家人的未來好好規劃<br>— 退休實驗室 —</div>
+
+        <div class="card">
+            <div class="section-title">實驗參數輸入</div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">🌱 目前年齡</span>
+                    <span class="value-display"><span id="val-age">30</span> 歲</span>
+                </div>
+                <div class="input-wrap">
+                    <span>👤</span>
+                    <input type="number" id="num-age" value="30" min="0" max="100">
+                </div>
+                <input type="range" id="range-age" min="0" max="100" value="30">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">🌸 預計退休年齡</span>
+                    <span class="value-display"><span id="val-retire">60</span> 歲</span>
+                </div>
+                <div class="input-wrap">
+                    <span>🏡</span>
+                    <input type="number" id="num-retire" value="60" min="0" max="100">
+                </div>
+                <input type="range" id="range-retire" min="0" max="100" value="60">
+            </div>
+
+            <div class="input-group">
+                <div class="label-row">
+                    <span class="label-title">💰 退休後每月生活費 (今日購買力)</span>
+                    <span class="value-display"><span id="val-expense">50,000</span> 元</span>
+                </div>
+                <div class="input-wrap">
+                    <span>☕</span>
+                    <input type="number" id="num-expense" value="50000" step="5000">
+                </div>
+            </div>
+        </div>
+
+        <div id="result-area" class="result-section">
+            <div class="card" style="border-left: 6px solid var(--sage);">
+                <div class="section-title" style="color: var(--sage);">經通膨校正後的科學實驗數據</div>
+                
+                <div class="result-card">
+                    <div class="result-row">
+                        <span>距離預計退休還有</span>
+                        <span class="result-val"><span id="res-years-to-retire">30</span> 年</span>
+                    </div>
+                    <div class="result-row" style="background: #fffdfa;">
+                        <span style="color: var(--rose-d); font-weight: 500;">🔥 屆時每月等值生活費 (2%通膨後)</span>
+                        <span class="result-val" style="color: var(--rose-d);"><span id="res-future-expense">90,568</span> 元 / 月</span>
+                    </div>
+
+                    <div class="result-row" style="color: #666;">
+                        <span>🛡️ 扣除預估社會保險基底 (勞保勞退基礎年金)</span>
+                        <span class="result-val" style="color: #777;">- 20,000 元 / 月</span>
+                    </div>
+
+                    <div class="result-row" style="border-top: 1px solid #e0d5d3; padding-top: 15px;">
+                        <span style="font-weight: 500;">💡 需自行透過工具準備的缺口</span>
+                        <span class="result-val" style="color: var(--rose-d);"><span id="res-gap-expense">70,568</span> 元 / 月</span>
+                    </div>
+                    
+                    <div class="result-card" style="background: #f4faf5; border: 1px solid #d8ebd9; margin-top: 15px;">
+                        <div class="result-row" style="padding: 0; border: none;">
+                            <span style="font-weight: 500;">設定 6% 永續提領工具下所需總本金：</span>
+                            <span class="result-val" style="color: var(--sage); font-size: 1.35rem;"><span id="res-total-fund">14,113,600</span> 元</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="coach-note">
+                    <div class="coach-note-title">📢 實驗室碎碎念</div>
+                    <p id="coach-comment">正在分析數據中...</p>
+                </div>
+
+                <div class="result-card" style="border-left: 6px solid var(--rose); margin-top: 25px;">
+                    <div class="section-title" style="color: var(--rose); margin-bottom: 10px;">為了達標，現在開始每個月該存多少？</div>
+                    
+                    <div class="result-row">
+                        <span>方式 A：純定存儲蓄 (0%複利盲目存)</span>
+                        <span class="result-val" style="color: var(--text);"><span id="res-save-flat">39,204</span> 元/月</span>
+                    </div>
+
+                    <div class="highlight-box">
+                        <div class="highlight-title">🐣 方式 B：穩健理財金雞母 (7%年化報酬複利)</div>
+                        <div class="result-row" style="padding: 4px 0; border: none;">
+                            <span style="font-size: 0.95rem; color: #7a6561;">每月需提撥：</span>
+                            <span class="result-val" style="color: var(--rose-d); font-size: 1.25rem;"><span id="res-save-compound-7">12,011</span> 元/月</span>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box premium">
+                        <div class="highlight-title" style="color: #2b5c8f;">🚀 方式 C：強效資產加速器 (10%年化報酬複利)</div>
+                        <div class="result-row" style="padding: 4px 0; border: none;">
+                            <span style="font-size: 0.95rem; color: #52667a;">每月僅需提撥：</span>
+                            <span class="result-val" style="color: #2b5c8f; font-size: 1.35rem;"><span id="res-save-compound-10">6,242</span> 元/月</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cta-container">
+                    <a href="https://lin.ee/15aSWMc" target="_blank" class="cta-btn">預約我的永續退休藍圖配置 ➔</a>
+                    <div class="cta-hint">* 點擊加入 LINE 官方帳號，私訊「<strong>退休實驗室</strong>」，即可由理財顧問為您量身規劃上述 7% / 10% 的資產配置提案</div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = {
+                age: { num: document.getElementById('num-age'), range: document.getElementById('range-age'), txt: document.getElementById('val-age') },
+                retire: { num: document.getElementById('num-retire'), range: document.getElementById('range-retire'), txt: document.getElementById('val-retire') },
+                expense: { num: document.getElementById('num-expense'), txt: document.getElementById('val-expense') }
+            };
+
+            const resultArea = document.getElementById('result-area');
+            const coachComment = document.getElementById('coach-comment');
+
+            function setupSync(elementObj) {
+                if(!elementObj.range) return;
+                elementObj.num.addEventListener('input', function() { elementObj.range.value = this.value; calculateRetirement(); });
+                elementObj.range.addEventListener('input', function() { elementObj.num.value = this.value; calculateRetirement(); });
+            }
+
+            setupSync(inputs.age);
+            setupSync(inputs.retire);
+            inputs.expense.num.addEventListener('input', calculateRetirement);
+
+            function calculateRetirement() {
+                const age = parseInt(inputs.age.num.value) || 0;
+                const retire = parseInt(inputs.retire.num.value) || 0;
+                const expense = parseInt(inputs.expense.num.value) || 0;
+                
+                const swr = 6.0; 
+                const inflationRate = 0.02; 
+                const govSubsidy = 20000; 
+
+                inputs.age.txt.innerText = age;
+                inputs.retire.txt.innerText = retire;
+                inputs.expense.txt.innerText = expense.toLocaleString();
+
+                if (retire > age && expense > 0) {
+                    const yearsToRetire = retire - age;
+                    
+                    const futureExpense = Math.round(expense * Math.pow(1 + inflationRate, yearsToRetire));
+                    const gapExpense = Math.max(0, futureExpense - govSubsidy);
+                    const annualGapExpense = gapExpense * 12;
+                    
+                    const totalFund = Math.round(annualGapExpense / (swr / 100));
+                    const totalMonths = yearsToRetire * 12;
+                    const saveFlat = Math.round(totalFund / totalMonths);
+
+                    function getPMT(rate, months, target) {
+                        if(target <= 0) return 0;
+                        const monthlyRate = rate / 12;
+                        const factor = Math.pow(1 + monthlyRate, months) - 1;
+                        return Math.round(target * (monthlyRate / factor));
+                    }
+
+                    const saveCompound7 = getPMT(0.07, totalMonths, totalFund);
+                    const saveCompound10 = getPMT(0.10, totalMonths, totalFund);
+
+                    document.getElementById('res-years-to-retire').innerText = yearsToRetire;
+                    document.getElementById('res-future-expense').innerText = futureExpense.toLocaleString();
+                    document.getElementById('res-gap-expense').innerText = gapExpense.toLocaleString();
+                    document.getElementById('res-total-fund').innerText = totalFund.toLocaleString();
+                    document.getElementById('res-save-flat').innerText = saveFlat.toLocaleString();
+                    document.getElementById('res-save-compound-7').innerText = saveCompound7.toLocaleString();
+                    document.getElementById('res-save-compound-10').innerText = saveCompound10.toLocaleString();
+
+                    if (saveFlat > 40000) {
+                        coachComment.innerHTML = `天啊！如果只放定存，每個月要存 <strong>${saveFlat.toLocaleString()}</strong> 元，這對要養家庭的媽媽來說簡直是天文數字！但別慌，這正是複利的魔力所在。改用 7% 金雞母系統，提撥額直接降到 <strong>${saveCompound7.toLocaleString()}</strong> 元。這不是有沒有錢的問題，而是<strong>工具選擇</strong>的問題。`;
+                    } else if (gapExpense === 0) {
+                        coachComment.innerHTML = `咦？看來在預設的政府年金保護下，目前的預算相當足夠喔！不過別忘了，勞保政策未來仍有變數，建議提早利用 7% 金雞母打造屬於自己的第二座永續防護網。`;
+                    } else {
+                        coachComment.innerHTML = `距離退休還有 <strong>${yearsToRetire}</strong> 年，時間是我們最大的優勢。純定存每個月要存 <strong>${saveFlat.toLocaleString()}</strong> 元，而啟動 10% 資產加速器後只需要 <strong>${saveCompound10.toLocaleString()}</strong> 元。少辛苦那幾十萬的力氣，留給陪伴孩子成長吧！`;
+                    }
+
+                    resultArea.classList.add('active');
+                } else {
+                    resultArea.classList.remove('active');
+                }
+            }
+
+            calculateRetirement();
+        });
+    </script>
+</body>
+</html>
