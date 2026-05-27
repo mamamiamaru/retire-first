@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>退休目標計算器 | 退休實驗室</title>
+    <title>退休目標計算器 | 保險媽咪的退休實驗室</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700&display=swap" rel="stylesheet">
@@ -310,7 +310,7 @@
 
         <div id="result-area" class="result-section">
             <div class="card" style="border-left: 6px solid var(--sage);">
-                <div class="section-title" style="color: var(--sage);">經通膨校正後的科學實驗數據</div>
+                <div class="section-title" style="color: var(--sage);">加上通膨後的目標</div>
                 
                 <div class="result-card">
                     <div class="result-row">
@@ -318,7 +318,7 @@
                         <span class="result-val"><span id="res-years-to-retire">30</span> 年</span>
                     </div>
                     <div class="result-row" style="background: #fffdfa;">
-                        <span style="color: var(--rose-d); font-weight: 500;">🔥 屆時每月等值生活費 (2%通膨後)</span>
+                        <span style="color: var(--rose-d); font-weight: 500;">🔥 每月等值退休金 (計算2%通膨)</span>
                         <span class="result-val" style="color: var(--rose-d);"><span id="res-future-expense">90,568</span> 元 / 月</span>
                     </div>
 
@@ -334,14 +334,14 @@
                     
                     <div class="result-card" style="background: #f4faf5; border: 1px solid #d8ebd9; margin-top: 15px;">
                         <div class="result-row" style="padding: 0; border: none;">
-                            <span style="font-weight: 500;">設定 6% 永續提領工具下所需總本金：</span>
+                            <span style="font-weight: 500;">設定6%提領的投資理財工具下所需總本金：</span>
                             <span class="result-val" style="color: var(--sage); font-size: 1.35rem;"><span id="res-total-fund">14,113,600</span> 元</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="coach-note">
-                    <div class="coach-note-title">📢 實驗室碎碎念</div>
+                    <div class="coach-note-title">📢退休實驗室碎碎念</div>
                     <p id="coach-comment">正在分析數據中...</p>
                 </div>
 
@@ -349,12 +349,12 @@
                     <div class="section-title" style="color: var(--rose); margin-bottom: 10px;">為了達標，現在開始每個月該存多少？</div>
                     
                     <div class="result-row">
-                        <span>方式 A：純定存儲蓄 (0%複利盲目存)</span>
+                        <span>方式 A：純儲蓄 (0%)</span>
                         <span class="result-val" style="color: var(--text);"><span id="res-save-flat">39,204</span> 元/月</span>
                     </div>
 
                     <div class="highlight-box">
-                        <div class="highlight-title">🐣 方式 B：穩健理財金雞母 (7%年化報酬複利)</div>
+                        <div class="highlight-title">🐣 方式 B：穩健理財投資工具 (7%年化報酬率)</div>
                         <div class="result-row" style="padding: 4px 0; border: none;">
                             <span style="font-size: 0.95rem; color: #7a6561;">每月需提撥：</span>
                             <span class="result-val" style="color: var(--rose-d); font-size: 1.25rem;"><span id="res-save-compound-7">12,011</span> 元/月</span>
@@ -362,7 +362,7 @@
                     </div>
 
                     <div class="highlight-box premium">
-                        <div class="highlight-title" style="color: #2b5c8f;">🚀 方式 C：強效資產加速器 (10%年化報酬複利)</div>
+                        <div class="highlight-title" style="color: #2b5c8f;">🚀 方式 C：資產加速器 (10%年化報酬率)</div>
                         <div class="result-row" style="padding: 4px 0; border: none;">
                             <span style="font-size: 0.95rem; color: #52667a;">每月僅需提撥：</span>
                             <span class="result-val" style="color: #2b5c8f; font-size: 1.35rem;"><span id="res-save-compound-10">6,242</span> 元/月</span>
@@ -372,7 +372,7 @@
 
                 <div class="cta-container">
                     <a href="https://lin.ee/15aSWMc" target="_blank" class="cta-btn">預約我的永續退休藍圖配置 ➔</a>
-                    <div class="cta-hint">* 點擊加入 LINE 官方帳號，私訊「<strong>退休實驗室</strong>」，即可由理財顧問為您量身規劃上述 7% / 10% 的資產配置提案</div>
+                    <div class="cta-hint">* 點擊加入LINE官方帳號，私訊「<strong>保險媽咪退休實驗室</strong>」，為您量身規劃7%~10%的投資理財配置方案</div>
                 </div>
 
             </div>
@@ -445,9 +445,9 @@
                     if (saveFlat > 40000) {
                         coachComment.innerHTML = `天啊！如果只放定存，每個月要存 <strong>${saveFlat.toLocaleString()}</strong> 元，這對要養家庭的媽媽來說簡直是天文數字！但別慌，這正是複利的魔力所在。改用 7% 金雞母系統，提撥額直接降到 <strong>${saveCompound7.toLocaleString()}</strong> 元。這不是有沒有錢的問題，而是<strong>工具選擇</strong>的問題。`;
                     } else if (gapExpense === 0) {
-                        coachComment.innerHTML = `咦？看來在預設的政府年金保護下，目前的預算相當足夠喔！不過別忘了，勞保政策未來仍有變數，建議提早利用 7% 金雞母打造屬於自己的第二座永續防護網。`;
+                        coachComment.innerHTML = `咦？看來在預設的政府年金保護下，目前的預算相當足夠喔！不過別忘了，勞保政策未來仍有變數，建議提早利用7%投資工具打造屬於自己的第二座永續防護網。`;
                     } else {
-                        coachComment.innerHTML = `距離退休還有 <strong>${yearsToRetire}</strong> 年，時間是我們最大的優勢。純定存每個月要存 <strong>${saveFlat.toLocaleString()}</strong> 元，而啟動 10% 資產加速器後只需要 <strong>${saveCompound10.toLocaleString()}</strong> 元。少辛苦那幾十萬的力氣，留給陪伴孩子成長吧！`;
+                        coachComment.innerHTML = `距離退休還有 <strong>${yearsToRetire}</strong> 年，時間是我們最大的優勢。純定存每個月要存 <strong>${saveFlat.toLocaleString()}</strong> 元，而啟動10%投資理財加速器後只需要 <strong>${saveCompound10.toLocaleString()}</strong> 元。少辛苦那幾十萬分的力氣，留給陪伴孩子成長吧！`;
                     }
 
                     resultArea.classList.add('active');
